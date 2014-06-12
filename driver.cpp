@@ -1,18 +1,11 @@
+#include <stdint.h>
+
 
 class VariableReluctanceDriver {
   int *motor;
   int *state;
-  void (*write_pin_callback)(int pin, int val);
-  
-  VariableReluctanceDriver(int (&_motor)[3], int (&_state)[3], void (*_write_pin_callback)(int pin, int val)) {
-    this->motor = _motor;  // Identify which pins map to each winding in the motor
-    this->state = _state;  // Determine the STATE of the windings in a variable reluctance motor
-    this->write_pin_callback = _write_pin_callback;  // A callback that writes a pin value to the assigned motor pin
-    
-    for (int i=0 ; i < 3 ; i++) {
-      write_pin_callback(motor[i], state[i]);
-    }
-  }
+
+  void (*write_pin_callback)(uint8_t pin, int val);
   
   int get_high_pin(int rightmost=1) {
     // Return the index of the pin with the highest value
@@ -36,6 +29,16 @@ class VariableReluctanceDriver {
   }
   
   public:
+    VariableReluctanceDriver(int (&_motor)[3], int (&_state)[3], void (*_write_pin_callback)(uint8_t pin, int val)) {
+      this->motor = _motor;  // Identify which pins map to each winding in the motor
+      this->state = _state;  // Determine the STATE of the windings in a variable reluctance motor
+      this->write_pin_callback = _write_pin_callback;  // A callback that writes a pin value to the assigned motor pin
+      
+      for (int i=0 ; i < 3 ; i++) {
+        write_pin_callback(motor[i], state[i]);
+      }
+    }
+
     void step_left() {
       // Get left most high pin
       int j = get_high_pin(1);

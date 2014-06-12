@@ -1,0 +1,10 @@
+{
+    "name": "VariableReluctanceDriver",
+    "version": "0.0.1",
+    "description": "Software for controlling variable reluctance motors",
+    "author": "Alex Gaudio",
+    "dependencies": {
+        "firmata": "latest",
+        "colors": "latest"
+    }
+}
