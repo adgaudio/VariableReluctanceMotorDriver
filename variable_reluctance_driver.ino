@@ -17,6 +17,7 @@ void setup() {
   // initialize Firmata
   Firmata.setFirmwareVersion(0, 1);
   Firmata.attach(ANALOG_MESSAGE, main_callback);
+  Firmata.begin(57600);
 
   // clear all pins
   for (int i=0 ; i < 32 ; i++) {
