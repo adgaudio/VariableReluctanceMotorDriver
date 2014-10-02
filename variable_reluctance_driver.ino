@@ -12,6 +12,9 @@ VariableReluctanceDriver motor1 = VariableReluctanceDriver(
 VariableReluctanceDriver motor2 = VariableReluctanceDriver(
   MOTOR2, STATE2, analogWrite);
 
+VariableReluctanceDriver MOTORS[] = {motor1, motor2};
+
+
 void setup() {
   // initialize Firmata
   Firmata.setFirmwareVersion(0, 2);
@@ -41,35 +44,43 @@ void establishContact() {
 }
 
 void loop() {
+//  byte arr[2] = {254, 254};
+//  main_callback(3, 2, arr);
+//  delay(500);
+//  main_callback(0, 2, arr);
+//  delay(500);
   establishContact();
 
   while(Firmata.available()) {
-    Firmata.processInput();   
-  }                           
+    Firmata.processInput();
+  }
 }
 
-void main_callback(byte num_motors, byte num_bytes_sent, byte *num_steps) {
-  // A callback that executes on a serial message
-  // motor1_steps is actually a signed int, but Firmata expects a byte in the function sign
- 
-  // TODO: basically, just figure out how to assign motor1 to n steps right or left and do the same with motor2
-  
-  double num_steps = num_steps[1];
-  if (num_motors & 1 == 1) {
-    motor1.step_right(num_steps)
-  } elif (num_motors & 3 == 2) {
-    motor1.step_left(num_steps);
-  }
-  if (num_motors & 3) {
-    motor2.step_right
-  for (i < num_bytes_sent ; i++) {
-  }
-  int m1 = motor1_steps;
-  if (m1 > 0) {
-    motor1.step_right(m1);
-  } else { motor1.step_left(m1); }
+void main_callback(byte dir, byte _num_bytes_sent, byte *num_steps) {
+  /* Move motors a given number of steps in some direction
 
-  if (motor2_steps > 0) {
-    motor2.step_right(motor2_steps);
-  } else { motor2.step_left(motor2_steps); }
+     `dir` - a byte where each bit corresponds to the direction
+        of a specific motor.  1 means step right.  0 means step left.
+        The nth bit starting from least significant (right) corresponds to the
+        nth motor in MOTORS
+     `_num_bytes_sent` - a number of motors being coordinated.  aka the size of
+        `num_steps`
+     `num_steps` - an array of bytes where the nth byte corresponds to the nth
+        motor.  Each byte determines an int8 number of steps that the motor
+        can move
+  */
+  int num_bytes_sent = _num_bytes_sent;
+  if (num_bytes_sent > 8) {
+    num_bytes_sent = 8;
+  }
+  for (int i=0 ; i<num_bytes_sent ; i++) {
+    if (((dir>>i) | 0) == 0) {
+      MOTORS[i].step_right(num_steps[i]);
+    } else if (((dir>>i) & 1) == 1) {
+      MOTORS[i].step_left(num_steps[i]);
+    } else {
+      while (1) {; }
+    }
+  }
 }
+
