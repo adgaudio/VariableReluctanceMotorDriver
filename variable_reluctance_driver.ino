@@ -1,6 +1,11 @@
 #include <Firmata.h>
 #include "driver.cpp"
 
+int joystick_high_pin = 1; // power to joystick switches
+int joystick_left_pin = 2; // wrong pin!?
+int joystick_right_pin = 4; // wrong pin!?
+int joystick_up_pin = 7; // wrong pin!?
+int joystick_down_pin = 8; // wrong pin!? 
 
 int MOTOR1[3] = {9, 10, 11};
 int MOTOR2[3] = {3, 5, 6};
@@ -34,6 +39,14 @@ void setup() {
   for (int i=0 ; i < 32 ; i++) {
     analogWrite(i, 255);
   }
+  
+  // set the joystick read pins
+  digitalWrite(joystick_high_pin, HIGH);
+  pinMode(joystick_left_pin, INPUT);
+  pinMode(joystick_right_pin, INPUT);
+  pinMode(joystick_up_pin, INPUT);
+  pinMode(joystick_down_pin, INPUT);
+  // 1 2 4 7 8 12-36
 }
 
 void establishContact() {
@@ -49,10 +62,22 @@ void loop() {
 //  delay(500);
 //  main_callback(0, 2, arr);
 //  delay(500);
-  establishContact();
+//  establishContact();
 
-  while(Firmata.available()) {
-    Firmata.processInput();
+//  while(Firmata.available()) {
+//    Firmata.processInput();
+//  }
+  if (digitalRead(joystick_left_pin) == HIGH) {
+    MOTORS[0].step_left(1);
+  }
+  if (digitalRead(joystick_right_pin) == HIGH) {
+    MOTORS[0].step_right(1);
+  }
+  if (digitalRead(joystick_up_pin) == HIGH) {
+    MOTORS[1].step_left(1);
+  }
+  if (digitalRead(joystick_down_pin) == HIGH) {
+    MOTORS[1].step_right(1);
   }
 }
 
