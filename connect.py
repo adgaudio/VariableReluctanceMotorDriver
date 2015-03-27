@@ -3,9 +3,9 @@ import argparse
 
 
 def main(ns):
-    print("Connecting to %s" % ns.port)
+    print(("Connecting to %s" % ns.port))
     board = firmata.Arduino(ns.port, ns.baud)
-    print board  # TODO
+    print(board)  # TODO
     global board
 
 
