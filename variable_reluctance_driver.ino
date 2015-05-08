@@ -1,14 +1,13 @@
-#include <Firmata.h>
 #include "driver.cpp"
 
-/* 2,4,7,12,13,14,15,16 */
 int joystick_left_pin = 2;
-/* int joystick_power_pin = 1; // power to joystick switches */
+int joystick_power_pin = 16; // power to joystick switches
 int joystick_down_pin = 4;
 int joystick_fire_pin = 7;
-int joystick_up_pin = 12;
-int joystick_right_pin = 13;
+int joystick_up_pin = 14;
+int joystick_right_pin = 15;
 
+/* Output from joystick looks like this, from left to right:
 /* int joystick_fire_pin = 2; // the red button */
 /* int joystick_power_pin = 2; // power to joystick switches */
 /* int joystick_left_pin = 1; */
@@ -54,13 +53,13 @@ void setup() {
   /* } */
 
   // set the joystick read pins
-  // TODO
-  /* digitalWrite(joystick_power_pin, HIGH); */
-  /* pinMode(joystick_left_pin, INPUT); */
-  /* pinMode(joystick_right_pin, INPUT); */
-  /* pinMode(joystick_up_pin, INPUT); */
-  /* pinMode(joystick_down_pin, INPUT); */
-  // 1 2 4 7 8 12-36
+  pinMode(joystick_power_pin, OUTPUT);
+  digitalWrite(joystick_power_pin, HIGH);
+  pinMode(joystick_left_pin, INPUT);
+  pinMode(joystick_right_pin, INPUT);
+  pinMode(joystick_up_pin, INPUT);
+  pinMode(joystick_down_pin, INPUT);
+  pinMode(joystick_fire_pin, INPUT);
 }
 
 void loop() {
@@ -93,59 +92,39 @@ void loop() {
   /* delay(500); */
 
 
-//  while(Firmata.available()) {
-//    Firmata.processInput();
-//  }
-  if (digitalRead(joystick_left_pin) == HIGH) {
-    Serial.println("left");
-    motor1.step_left(1);
+// motor2 is the small one.
+// motor1 is the large one.
+  if (!Serial.available()) {
+    return;
   }
-  if (digitalRead(joystick_right_pin) == HIGH) {
-    Serial.println("right");
-    motor1.step_right(1);
+  int instruction = (int) Serial.read();
+  Serial.println(instruction);
+
+  if (false) {
   }
-  if (digitalRead(joystick_up_pin) == HIGH) {
+  /* else if (analogRead(joystick_left_pin) == 1023) { */
+  else if (instruction == 52) {
+    Serial.println("        left");
+    motor2.step_right(10);
+  }
+  /* else if (analogRead(joystick_up_pin) == 1023) { */
+  else if (instruction == 49) {
     Serial.println("up");
-    motor2.step_left(1);
+    motor1.step_left(10);
   }
-  if (digitalRead(joystick_down_pin) == HIGH) {
-    Serial.println("down");
-    motor2.step_right(1);
+  /* else if (analogRead(joystick_down_pin) == 1023) { */
+  else if (instruction == 51) {
+    Serial.println("   down");
+    motor1.step_right(10);
   }
-  delay(1);
-}
-
-// loop.... if comunicating from computer
-//  byte arr[2] = {254, 254};
-//  main_callback(3, 2, arr);
-//  delay(500);
-//  main_callback(0, 2, arr);
-//  delay(500);
-void main_callback(byte dir, byte _num_bytes_sent, byte *num_steps) {
-  /* Move motors a given number of steps in some direction
-
-     `dir` - a byte where each bit corresponds to the direction
-        of a specific motor.  1 means step right.  0 means step left.
-        The nth bit starting from least significant (right) corresponds to the
-        nth motor in MOTORS
-     `_num_bytes_sent` - a number of motors being coordinated.  aka the size of
-        `num_steps`
-     `num_steps` - an array of bytes where the nth byte corresponds to the nth
-        motor.  Each byte determines an int8 number of steps that the motor
-        can move
-  */
-  int num_bytes_sent = _num_bytes_sent;
-  if (num_bytes_sent > 8) {
-    num_bytes_sent = 8;
+  /* else if (analogRead(joystick_right_pin) == 1023) { */
+  else if (instruction == 50) {
+    Serial.println("             right");
+    motor2.step_left(10);
   }
-  for (int i=0 ; i<num_bytes_sent ; i++) {
-    if (((dir>>i) | 0) == 0) {
-      MOTORS[i].step_right(num_steps[i]);
-    } else if (((dir>>i) & 1) == 1) {
-      MOTORS[i].step_left(num_steps[i]);
-    } else {
-      while (1) {; }
-    }
+  /* if (analogRead(joystick_fire_pin) == 1023) { */
+  if (instruction == 53) {
+    Serial.println("                   fire!");
+    // TODO
   }
 }
-
