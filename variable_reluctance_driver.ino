@@ -102,28 +102,23 @@ void loop() {
 
   if (false) {
   }
-  /* else if (analogRead(joystick_left_pin) == 1023) { */
-  else if (instruction == 52) {
+  else if (instruction == 52 || digitalRead(joystick_left_pin) == HIGH) {
     Serial.println("        left");
     motor2.step_right(10);
   }
-  /* else if (analogRead(joystick_up_pin) == 1023) { */
-  else if (instruction == 49) {
+  else if (instruction == 49 || digitalRead(joystick_up_pin) == HIGH) {
     Serial.println("up");
     motor1.step_left(10);
   }
-  /* else if (analogRead(joystick_down_pin) == 1023) { */
-  else if (instruction == 51) {
+  else if (instruction == 51 || digitalRead(joystick_down_pin) == HIGH) {
     Serial.println("   down");
     motor1.step_right(10);
   }
-  /* else if (analogRead(joystick_right_pin) == 1023) { */
-  else if (instruction == 50) {
+  else if (instruction == 50 || digitalRead(joystick_right_pin) == HIGH) {
     Serial.println("             right");
     motor2.step_left(10);
   }
-  /* if (analogRead(joystick_fire_pin) == 1023) { */
-  if (instruction == 53) {
+  if (instruction == 53 || digitalRead(joystick_fire_pin) == HIGH) {
     Serial.println("                   fire!");
     // TODO
   }

@@ -49,6 +49,7 @@ def main(ns):
         elif inpt == 'c':
             board.write('2')
             board.write('3')
+        board.flush()
 
 
 parser = argparse.ArgumentParser()
